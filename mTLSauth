@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+"""
+a very simple web server for authorization based on serial number and
+requested application.
+
+it is designed to work in conjunction with the `forward_auth` feature of the
+Caddy web server :
+…
+forward_auth 127.0.0.1:3000 {
+	uri /mTLSauth
+	header_up -*
+	header_up X-Client-Ip {client_ip}
+	header_up X-Client-Serial {http.request.tls.client.serial}
+}
+handle_path /application.one/* {
+	reverse_proxy 127.0.0.1:8000
+}
+…
+
+the URI must be `/mTLSauth`.
+
+it expects in x-client-serial header serial number of client certificate (mTLS).
+
+it relies on a TOML configuration file mTLSauth.toml that defines an array of
+serial numbers authorized to access an application :
+# alice 243667759311437977940774218371054068666
+#   bob 367124548323783656842008786261177525455
+"application.one" = [
+	"243667759311437977940774218371054068666",
+	"367124548323783656842008786261177525455"
+]
+"""
+
+import asyncio
+import logging
+import sys
+import tomllib
+
+with open("mTLSauth.toml", "rb") as f:
+	config = tomllib.load(f)
+
+logging.basicConfig(
+	level=logging.INFO,
+	handlers=[logging.StreamHandler(sys.stderr)],
+	format="%(asctime)s %(levelname)s %(message)s",
+)
+log = logging.getLogger(__name__)
+
+HOST = "127.0.0.1"
+PORT = 3000
+
+OK = b"HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+KO = b"HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+
+async def handle(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+	try:
+		data = await asyncio.wait_for(reader.read(1024), timeout=2.0)
+		data = data.decode("iso-8859-1", errors="ignore")
+		lines = data.split("\r\n\r\n")[0].splitlines()
+
+		if not lines or lines.pop(0) != "GET /mTLSauth HTTP/1.1":
+			log.warning("🟥 not « GET /mTLSauth HTTP/1.1 »")
+			writer.write(KO)
+			return
+
+		headers = dict(
+			[k.strip().lower(), v.strip()]
+			for k, v in [h.split(":", 1) for h in lines if ":" in h]
+		)
+		uri	 = headers.get("x-forwarded-uri", "???")
+		address = headers.get("x-client-ip", "???")
+		serial	 = headers.get("x-client-serial", "???")
+		application = uri.strip('/').split('/')[0]
+
+		if application in config:
+			if serial in config[application]:
+				log.info(f"🟩 {address} {serial} {uri}")
+				writer.write(OK)
+			else:
+				log.warning(f"🟨 {address} {serial} {uri}")
+				writer.write(KO)
+		else:
+			log.warning(f"🟧 {address} {serial} {uri}")
+			writer.write(KO)
+
+	except TimeoutError:
+		log.warning("🟥 timeout (3.0s)")
+		writer.write(KO)
+	finally:
+		await writer.drain()
+		writer.close()
+
+async def main():
+	server = await asyncio.start_server(handle, HOST, PORT)
+	log.info(f"🟦 mTLSauth listening on {HOST}:{PORT}")
+	async with server:
+		await server.serve_forever()
+
+asyncio.run(main())
