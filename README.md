@@ -50,6 +50,25 @@ www.applications.net {
 > client's IP address is also added to the headers with `header_up X-Client-Ip…` for logging purposes.
 
 
+## mTLSauth configuration
+
+mTLSauth configuration file is `mTLSauth.toml` : it is expected to be located where mTLSauth is started.
+
+for each application that needs to be accessed, it lists in a table serial number - in decimal format - of certificates authorized :
+```toml
+# alice 243667759311437977940774218371054068666
+#   bob 367124548323783656842008786261177525455
+
+"application.one" = [
+"243667759311437977940774218371054068666",
+"367124548323783656842008786261177525455",
+]
+```
+
+> [SPPKI](https://github.com/patatetom/SPPKI) can be used to create and manage certificates for a small organization.<br/>
+> command `python -c "print(int('$(openssl x509 -in /root/pki/users/alice.crt -noout -serial)'[7:], 16))"` can be used to easily retrieve serial number of client certificate in decimal format.
+
+
 ## see also
 
 - [Caddy's forward_auth directive](https://caddyserver.com/docs/caddyfile/directives/forward_auth)
