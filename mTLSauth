@@ -7,7 +7,7 @@ it is designed to work in conjunction with the `forward_auth` feature of the
 Caddy web server :
 …
 forward_auth 127.0.0.1:3000 {
-	uri /mTLSauth
+	uri /
 	header_up -*
 	header_up X-Client-Ip {client_ip}
 	header_up X-Client-Serial {http.request.tls.client.serial}
@@ -58,8 +58,8 @@ async def handle(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
 		data = data.decode("iso-8859-1", errors="ignore")
 		lines = data.split("\r\n\r\n")[0].splitlines()
 
-		if not lines or lines.pop(0) != "GET /mTLSauth HTTP/1.1":
-			log.warning("🟥 not « GET /mTLSauth HTTP/1.1 »")
+		if not lines or lines.pop(0) != "GET / HTTP/1.1":
+			log.warning("🟥 not « GET / HTTP/1.1 »")
 			writer.write(KO)
 			return
 
