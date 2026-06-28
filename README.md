@@ -87,3 +87,4 @@ check and install [mTLSauth](mTLSauth) in `/usr/local/sbin/` (for example) and :
 
 - [Caddy's forward_auth directive](https://caddyserver.com/docs/caddyfile/directives/forward_auth)
 - [mTLS: When certificate authentication is done wrong](https://github.blog/security/vulnerability-research/mtls-when-certificate-authentication-is-done-wrong/)
+- [TinyAuth](https://tinyauth.app/)
