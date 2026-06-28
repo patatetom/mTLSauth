@@ -69,6 +69,20 @@ for each application that needs to be accessed, it lists in a table serial numbe
 > command `python -c "print(int('$(openssl x509 -in /root/pki/users/alice.crt -noout -serial)'[7:], 16))"` can be used to easily retrieve serial number of client certificate in decimal format.
 
 
+# mTLSauth
+
+check and install [mTLSauth](mTLSauth) in `/usr/local/sbin/` (for example) and :
+
+```console
+~# /usr/local/sbin/mTLSauth
+2026-06-28 21:00:05,500 INFO 🟦 mTLSauth listening on 127.0.0.1:3000
+2026-06-28 21:00:11,562 WARNING 🟥 not « GET /mTLSauth HTTP/1.1 »
+2026-06-28 21:00:29,738 WARNING 🟧 176.174.26.24 243667759311437977940774218371054068666 /bad.application/
+2026-06-28 21:00:37,556 WARNING 🟨 176.174.62.42 000000000000000000000000000000000000000 /application.one/
+2026-06-28 21:00:51,117 INFO 🟩 176.174.28.176 243667759311437977940774218371054068666 /application.one/
+2026-06-28 21:00:56,974 INFO 🟩 176.174.82.16 367124548323783656842008786261177525455 /application.one/
+```
+
 ## see also
 
 - [Caddy's forward_auth directive](https://caddyserver.com/docs/caddyfile/directives/forward_auth)
