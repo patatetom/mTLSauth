@@ -31,7 +31,7 @@ www.applications.net {
 	}
 	handle {
 		forward_auth 127.0.0.1:3000 {
-			uri /mTLSauth
+			uri /
 			header_up -*
 			header_up X-Client-Ip {client_ip}
 			header_up X-Client-Serial {http.request.tls.client.serial}
@@ -76,7 +76,7 @@ check and install [mTLSauth](mTLSauth) in `/usr/local/sbin/` (for example) and :
 ```console
 ~# /usr/local/sbin/mTLSauth
 2026-06-28 21:00:05,500 INFO 🟦 mTLSauth listening on 127.0.0.1:3000
-2026-06-28 21:00:11,562 WARNING 🟥 not « GET /mTLSauth HTTP/1.1 »
+2026-06-28 21:00:11,562 WARNING 🟥 not « GET / HTTP/1.1 »
 2026-06-28 21:00:29,738 WARNING 🟧 176.174.26.24 243667759311437977940774218371054068666 /bad.application/
 2026-06-28 21:00:37,556 WARNING 🟨 176.174.62.42 000000000000000000000000000000000000000 /application.one/
 2026-06-28 21:00:51,117 INFO 🟩 176.174.28.176 243667759311437977940774218371054068666 /application.one/
