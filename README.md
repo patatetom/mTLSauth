@@ -45,8 +45,8 @@ www.applications.net {
 
 > client certificate is forced with `mode require_and_verify`.<br/>
 > block `forward_auth 127.0.0.1:3000 {…}` enforces authorization through mTLSauth.<br/>
-> to streamline the processes, most of the headers are removed using `header_up -*`.<br/>
-> client certificate's serial number is added to the headers passed to mTLSauth with `header_up X-Client-Serial…`.<br/>
+> to streamline processes, most of headers are removed using `header_up -*`.<br/>
+> client certificate's serial number is added to headers passed to mTLSauth with `header_up X-Client-Serial…`.<br/>
 > client's IP address is also added to the headers with `header_up X-Client-Ip…` for logging purposes.
 
 
