@@ -1,4 +1,4 @@
-# mTLSauth
+# 👮‍♂️ mTLSauth
 
 [Caddy](https://caddyserver.com/)'s `forward_auth` authorization gateway based on client certificate's serial number :
 _Caddy submits each incoming request to mTLSauth, which returns a [200](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200) (access granted) or [403](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403) (access denied) response depending on client certificate's serial number and requested application._
@@ -11,6 +11,9 @@ here is an example configuration for Caddy :
 {
 	admin off
 	auto_https off
+	servers {
+		strict_sni_host on
+	}
 }
 www.applications.net {
 	tls /root/pki/server/tls.crt /root/pki/server/tls.key {
@@ -65,7 +68,7 @@ for each application that needs to be accessed, it lists in a table serial numbe
 ]
 ```
 
-> [SPPKI](https://github.com/patatetom/SPPKI) can be used to create and manage certificates for a small organization.<br/>
+> 🗝️ [SPPKI](https://github.com/patatetom/SPPKI) can be used to create and manage certificates for a small organization.<br/>
 > command `python -c "print(int('$(openssl x509 -in /root/pki/users/alice.crt -noout -serial)'[7:], 16))"` can be used to easily retrieve serial number of client certificate in decimal format.
 
 
