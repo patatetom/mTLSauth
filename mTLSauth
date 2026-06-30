@@ -84,7 +84,7 @@ async def handle(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
 			writer.write(KO)
 
 	except TimeoutError:
-		log.warning("🟥 timeout (3.0s)")
+		log.warning("🟥 timeout")
 		writer.write(KO)
 	finally:
 		await writer.drain()
