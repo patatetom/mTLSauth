@@ -17,7 +17,7 @@ handle_path /application.one/* {
 }
 …
 
-the URI must be `/mTLSauth`.
+the URI must be `/`.
 
 it expects in `x-client-serial` header serial number of client certificate (mTLS).
 
